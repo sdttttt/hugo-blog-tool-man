@@ -15,8 +15,7 @@
 如果您想要更换主题, 请修改`config.toml`中的内容,以及将主题放入`themes`文件夹.
 
 值得注意的是我在我的博客中使用了`Telegram Comment`作为评论系统.
-在fork后, 请删除`themes/future/layouts/post/comments.html`中插入comments的JS代码.
-如果您想要继续使用, 请在 **https://comments.app/** 处生成属于你自己的评论脚本.然后更换上述的代码片段.
+如果您想要继续使用, 请在 **https://comments.app/** 处生成属于你自己的评论脚本.然后更换`themes/future/layouts/post/comments.html`中插入的JS代码片段.
 
 配置是简单的, 我不喜欢复杂的东西.
 
