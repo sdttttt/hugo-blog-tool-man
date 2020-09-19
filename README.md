@@ -1,6 +1,6 @@
 # SDTTTTT's Blog Generator
 
-[sdttttt.github.io](https://sdttttt.github.io) 网站的生成器, 使用hugo生成. 它是博客, 同时也是生成器.
+[sdttttt.github.io](https://sdttttt.github.io) 网站的生成器, 使用hugo生成. 这个仓库是博客,同时也是生成器.
 
 如果你喜欢我博客的样式, 或者你是hugo的使用者, 都可以fork这个仓库.
 
