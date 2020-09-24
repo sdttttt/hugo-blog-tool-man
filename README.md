@@ -10,12 +10,11 @@
 
 关于自动部署请查看`deploy.sh`文件, 其中都有说明.
 
-文章目录在content下, 您可以删出他们.
+文章目录在`content`下.
 
-如果您想要更换主题, 请修改`config.toml`中的内容,以及将主题放入`themes`文件夹.
+您可以自由更换主题, 在`themes`目录下.
 
-值得注意的是我在我的博客中使用了`Telegram Comment`作为评论系统.
-如果您想要继续使用, 请在 **https://comments.app/** 处生成属于你自己的评论脚本.然后更换`themes/future/layouts/post/comments.html`中插入的JS代码片段.
+如果你想要使用这个项目自带的主题, 也可以!
 
 配置是简单的, 我不喜欢复杂的东西.
 
