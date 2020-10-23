@@ -61,6 +61,10 @@ function cleanWork(){
 
 function syncSourceCode(){
 
+    echo -e "\033[32m[Pull]\033[0m 👀 Compare code ... "
+
+    git pull $code_address master
+
     echo -e "\033[32m[Deploying]\033[0m 🚀 Push Running... "
 
     git add --ignore-errors .
