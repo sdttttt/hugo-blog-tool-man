@@ -3,4 +3,6 @@
 
 set -e
 
-hugo new post/$1.md
+read -p "Input post name: " name
+
+hugo new blog/$name.md
