@@ -124,7 +124,7 @@ function syncSourceCode {
 function generateSite {
 
     successLog "HugoGenerator" "🚚 Hugo Building..."
-    hugo
+    hugo --enableGitInfo --print-mem --minify  -v
 
     if [ -d "./public" ]; then
         mv ./public ./docs
