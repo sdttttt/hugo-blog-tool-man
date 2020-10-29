@@ -21,33 +21,48 @@
 
 starttime=`date +'%Y-%m-%d %H:%M:%S'`
 
-code_address="git@github.com:your_username/your_repo" # Hugo 项目地址
-code_address_gitee="git@gitee.com:your_username/your_repo" # Hugo 项目地址 Gitee
+code_address="git@github.com:sdttttt/sdttttt.github.io"     # Hugo 项目地址
+code_address_gitee="git@gitee.com:sdttttt/sdttttt.gitee.io" # Hugo 项目地址 Gitee
 
-commit_message="docs: ☣ Update Blog."
+IMGTIME=`date --rfc-3339="ns"`
+
+commit_message="$IMGTIME"
 
 dir=$(pwd)
 
-function envClean(){
-    if [ -d "./public" ];
-    then
+function envClean() {
+    if [ -d "./public" ]; then
         rm -rf ./public
     fi
 
-    if [ -d "../public" ];
-    then
+    if [ -d "../public" ]; then
         rm -rf ../public
     fi
 
-    if [ -d "./docs" ];
-    then
+    if [ -d "./docs" ]; then
         rm -rf ./docs
     fi
 }
 
-function cleanWork(){
+function errorLog {
+    echo -e "\033[31m[$1]\033[0m $2"
+}
 
-    echo -e "\033[32m[Clean]\033[0m 🧹 Running..."
+function warnLog {
+    echo -e "\033[33m[$1]\033[0m $2"
+}
+
+function successLog {
+    echo -e "\033[32m[$1]\033[0m $2"
+}
+
+function stateLog {
+    echo -e "\033[34m[$1]\033[0m $2"
+}
+
+function cleanWork {
+
+    successLog "Clean" "🧹 Running..."
 
     cd $dir
     cd ..
@@ -55,86 +70,104 @@ function cleanWork(){
     rm -rf ./public
 }
 
+function checkSSH() {
+    if [[ $code_address == https* ]]; then
+        warnLog "Authentication" "🗝 It looks like you're not using **SSH** for authentication."
+    elif [[ $code_address == git@* ]]; then
+        successLog "Authentication" "🔑 Authentication of SSH! This is very good!"
+    fi
+}
 
-function syncSourceCode(){
+function syncSourceCode {
+    set -e
 
-    echo -e "\033[32m[Pull]\033[0m 👀 Compare code ... "
+    git add --ignore-errors .
+
+    git commit -q -m "$commit_message"
+
+    checkSSH
+
+    successLog "Pull" "👀 Compare code ... "
 
     git pull $code_address master
 
-    echo -e "\033[32m[Deploying]\033[0m 🚀 Push Running... "
+    successLog "Deploying" "🚀 Push Running... "
 
-    git add --ignore-errors .
-    git commit -q -m "${commit_message}"
+    push_starttime=$(date +'%Y-%m-%d %H:%M:%S')
 
-    set -e
+    if [ ${#code_address_gitee} -eq 0 ]; then
 
-    push_starttime=`date +'%Y-%m-%d %H:%M:%S'`
+        successLog "Synchronizing" "📚 Source code to Github..."
 
-    if [ -n  $code_address_gitee ];
-    then
-        echo -e "\033[32m[Synchronizing]\033[0m 🚀 Source code to Gitee..."
-        git push -q --progress --atomic $code_address_gitee master &
-        local pid=$!
-        echo -e "\033[32m[Synchronizing]\033[0m 🚀 Source code to Github..."
-        git push -q --progress --atomic $code_address master
-        wait $pid
-    else
         git push --progress --atomic $code_address master
+    
+    else
+        
+        successLog "Synchronizing" "📚 Source code to Github and Gitee..."
+        
+        git push -q --progress --atomic $code_address_gitee master &
+        
+        local pid=$!
+        
+        git push -q --progress --atomic $code_address master
+        
+        wait $pid
     fi
 
-    local push_endtime=`date +'%Y-%m-%d %H:%M:%S'`
-    local start_seconds=$(date --date="$push_starttime" +%s);
-    local end_seconds=$(date --date="$push_endtime" +%s);
+    local push_endtime=$(date +'%Y-%m-%d %H:%M:%S')
+    local start_seconds=$(date --date="$push_starttime" +%s)
+    local end_seconds=$(date --date="$push_endtime" +%s)
 
-    echo -e "Total in "$((end_seconds-start_seconds))" s"
+    stateLog "Time" "⏱ Total in "$((end_seconds - start_seconds))" s"
 }
 
-function generateSite(){
-    echo -e "\033[32m[HugoGenerator]\033[0m 🚚 Hugo Building..."
+function generateSite {
+
+    successLog "HugoGenerator" "🚚 Hugo Building..."
     hugo
 
-    if [ -d "./public" ];
-    then
+    if [ -d "./public" ]; then
         mv ./public ./docs
     fi
 }
 
-function checkEnv() {
-    echo -e "\033[34m[Monitor]\033[0m 🤔 Check Status..."
+function checkEnv {
+    stateLog "Monitor" "🛠 Check Status..."
 
-    if [ $? -eq 0 ];
-    then
-        if [ -d "./docs" ];
-        then    
+    if [ $? -eq 0 ]; then
+        if [ -d "./docs" ]; then
             return 0
         else
-            echo -e "\033[31m[Error]\033[0m 💥 Oh! 没有找到docs目录."
+            errorLog "Error" "💥 Oh! 没有找到docs目录."
         fi
     else
-        echo -e "\033[31m[Error]\033[0m 💥 环境变量中不存在 hugo: 请安装它"
+        errorLog "Error" "💥 环境变量中不存在 hugo: 请安装它"
     fi
 
     return 1
 }
 
-function deploy(){
+function deploy {
 
     checkEnv
-    if [ $? -eq 0 ];
-    then
+    if [ $? -eq 0 ]; then
         syncSourceCode
         cleanWork
 
-        local endtime=`date +'%Y-%m-%d %H:%M:%S'`
-        local start_seconds=$(date --date="$starttime" +%s);
-        local end_seconds=$(date --date="$endtime" +%s);
+        local endtime=$(date +'%Y-%m-%d %H:%M:%S')
+        local start_seconds=$(date --date="$starttime" +%s)
+        local end_seconds=$(date --date="$endtime" +%s)
 
-        echo -e "\033[32m[Successful]\033[0m 🎉 We did it! 🕒 Total Time: "$((end_seconds-start_seconds))"s"
+        successLog "Successful" "🎉 We did it! ⏱ Total Time: "$((end_seconds - start_seconds))"s"
     else
         cleanWork
     fi
 }
+
+if [[ -z $(git diff --stat) ]]; then
+    errorLog "Error" "💔 文件没有变动欸..."
+    exit
+fi
 
 envClean
 generateSite
